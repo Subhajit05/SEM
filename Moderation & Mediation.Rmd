@@ -1,0 +1,335 @@
+---
+title: 'Exploring Multivariate Relationships '
+---
+
+```{r message=F, warning=FALSE, include=FALSE , error=FALSE}
+library(dplyr)
+library(ggplot2)
+library(plotly)
+library(GGally)
+library(gapminder)
+library(ggmosaic)
+
+
+```
+
+ 
+
+### Story - 1  ###
+
+In this story we are looking at effect of watching video games. In this particular dataset we have three variable -
+
+1. No. of hours / week used to watch (violent) videos
+2. Aggression
+2. Callous Unemotional Trait 
+
+Therefore, this story is about examining relationship between aggression and time spent in watching videos.
+
+```{r}
+setwd("E:/Outline/WD/D3.1")
+dir()
+video <- read.csv("aggression.csv")
+str(video)
+summary(video)
+
+```
+
+The variable which are of our interst are Agress, Vi_Game and CaUnTs. So this is a small story which just involves three variables.
+
+
+```{r}
+
+plot_ly(data = video,x = ~Vid_Game, y = ~Aggress, color = ~CaUnTs, size = ~CaUnTs, type = "scatter")
+
+
+```
+
+Now , we all know the agression is a behaviour , which depends upon attitude. Now CaUnTs which inplies Casual and Unemotional aspect of the subjects - may be considered as attitude.
+
+I am considering them as the context. In any visalisaion , interplay of variable should be seen in a context. 
+
+From the above plot one can note that - 
+
+- there is section of people represented by "small and blue" dots - for them , watching videos for long hours dont lead to aggressive behavior. 
+
+- and there is section (represeneted by larger points with green and yellow COLOR) , for them increase in exposure to violent videos lead to increase in aggression.
+
+And to be sure the next plot is drawn. 
+
+```{r }
+library(ggplot2)
+
+
+ggplot(data = video, aes(x = Vid_Game, y = Aggress)) + geom_point(aes(size = CaUnTs, color = CaUnTs)) + facet_grid(cut(video$CaUnTs,4)) + geom_smooth(method = "lm", color = "red")
+
+```
+
+In this plot (static in nature) we have explored the relation ship between exposure to violent videos and aggression. 
+
+Four sub-plots shows , that people having higher CaUnTs (as represented by larges points) shows more aggression as they are exposed to videos. 
+
+
+So the relationship between Agression and No.of hours spent to watch videos(violent) depends upon the value of CaUnTs. This phenomena in statistics is known as "MODERATION". And we have used to unravel this relationship with the help of visualisaiton. 
+
+In the following section we shall see how such relationships should modelled. Let us take only two variables , i.e. no of hours spent to watch violent videoa and second is CaUnTs. 
+
+
+```{r}
+library(psych)
+
+m1 <- lm(Aggress ~ Vid_Game + CaUnTs, data = video)
+summary(m1)
+
+
+
+```
+So, R^2 stands at 35.6%. At the same time all the coefficients are significant.
+
+Since , the relationship between agression and no of hours spent to watch video  is moderated by the attitude (CaUnTs) - we are considering to inlcude "an interaction term" - which is the product of the two predictors.  
+
+```{r}
+
+video$Interaction = video$Vid_Game * video$CaUnTs
+
+summary(lm(Aggress ~ Vid_Game + CaUnTs + Interaction, data = video))
+
+
+```
+
+
+
+```{r}
+
+```
+
+From the summary, we can not that R^2 has increased to 37.7%. Also we can observe the following - 
+
+1. CaUnTs is NO LONGER a significant predictor
+
+2. Interaction term  is signifcant at .1% level. 
+
+3. Vid_Game i.e. hours spent to watch video is signficant at 5%.
+
+
+
+
+### Story - 3 ###
+
+The third story is about the study done on moderating role of social ties on entrepreneurs' depressed affect and withdrawal intentions in response to economic stress by Pollack, J., VanEpps, E. M., & Hayes, A. F. (2012). (The . Journal of Organizational Behavior, 33, 789-810.)
+ 
+
+
+```{r}
+
+stress <- read.csv("e_stress.csv")
+
+str(stress)
+
+summary(stress)
+
+```
+
+Let us first understand the experiment - characters / variables - 
+
+- estress - economic stress , the main phenomena 
+
+
+- ese - economic and social ties (business networking, i.e. no of people respondent physically met on a  + talked to over phone and sent an email on Everday day. 
+
+
+- affect - depression due to economic stress 
+
+
+- withdraw - closing business 
+
+
+- tenure - experience in the business
+
+
+- Rest of the variables are demographic variables and self explanatory in nature.
+
+So, the strings of relationships starts with economic stress and ends with withdrawl symptoms.
+
+Let us the exploration beigns - 
+
+```{r}
+
+plot_ly(data = stress) %>% add_pie(values = table(stress$sex), labels = c("female", "male") ) 
+
+
+plot_ly(data = stress) %>% add_pie(values = table(cut(stress$age,5)), labels = c("< 32.6", "> 32.6 & <=42.2", ">42.2 & <=51.8", ">51.8 & <=61.4", ">61.4 & <=71"))
+
+
+
+plot_ly(data = stress) %>% add_pie(values = table(cut(stress$tenure,5)), labels = c("<=6.6 yrs", ">6.6 & <=13.2 yrs", ">13.2 & <=19.2 yrs", ">19.8 & <= 26.4 yrs" , "> 26.4 & <= 33"))
+
+
+```
+
+
+Demographic profile - 
+
+1. Gender profile - 62% male and 38% female
+
+2. Age profile - 30% of respondetns belongs age range 42 to 52; appraox 28% belongs to 32 to 42. 17% belong to lesst 32 years
+
+3. Tenure profile - 68% respondents have less than 6.6 years of experience and 20% has expereince of greater than 6.6 and less than 13.2 years. So this two groups constitutes almost 88% of the population. 
+
+
+Now, we shall explore some relationship among the variables, following variables are closely related -
+
+- estress
+
+- withdraw 
+
+- affect
+
+
+```{r, message=FALSE}
+
+library(ppcor)
+
+p_cor <- pcor(stress)
+
+cor_est <- p_cor$estimate
+ 
+cor_est<- as.data.frame(cor_est)
+
+plot_ly(data = cor_est, x = rownames(cor_est), y = colnames(cor_est), z = as.matrix(cor_est), colours = "RdBu") %>% add_heatmap()
+
+```
+
+1. From the above correlation diagram that "withdrawal" phenomena is most strongly related with  affect (depression),economic stress and ese (business related social ties). 
+
+
+2. affect (depression) is strongly connected with economic stress. 
+
+3. economic stress (estress) is strongly correlated with affect (depression)
+
+
+```{r, warning=F, message=F}
+
+
+ggplot(data = stress, aes(y = withdraw , x = estress), type =  "scatter") + geom_smooth(method = "lm")
+
+ggplot(data = stress, aes(y = withdraw , x = estress), type =  "scatter") + geom_smooth(method = "lm") + facet_wrap(stress$sex)
+
+ggplot(data = stress, aes(y = withdraw , x = estress), type =  "scatter") + geom_smooth(method = "lm") + facet_wrap(cut(stress$tenure,4))
+
+
+
+
+```
+
+
+1. As expected with increase in economic stress we find that tendency to withdraw increases. Next , we will see whether this relationship is modified by any other variables. 
+
+2. As can be seen that the gender modified the relationship. 
+
+3. Tenure also modifes the relationship.
+
+
+
+```{r}
+
+ggplot(data = stress, aes(y = withdraw , x = ese), type =  "scatter") + geom_smooth(method = "lm")
+
+ggplot(data = stress, aes(y = withdraw , x = ese), type =  "scatter") + geom_smooth(method = "lm") + facet_wrap(stress$sex) # gender is not modifyig the relation
+
+ggplot(data = stress, aes(y = withdraw , x = ese), type =  "scatter") + geom_smooth(method = "lm") + facet_wrap(cut(stress$tenure,4))
+
+
+
+```
+
+1. as expected / hypothesised , with greater intensity of communication within business network leads to lesser tendency of withdrawal. 
+
+2. Tenure does modfy the relationship , but gender has no significant role.
+
+
+
+```{r}
+
+ggplot(data = stress, aes(y = withdraw , x = affect), type =  "scatter") + geom_smooth(method = "lm") 
+
+
+
+ggplot(data = stress, aes(y = withdraw , x = affect), type =  "scatter") + geom_smooth(method = "lm") + facet_wrap(cut(stress$tenure,4))
+
+
+
+```
+
+1. In line with the expectation increase in depression will lead higher temdency to withdraw. 
+
+2. The direction of the relationship remains same, when gender is factored into. 
+
+
+```{r}
+library(ppcor)
+
+pcor(stress)
+
+# option -1 #
+
+summary(lm(withdraw ~ estress + ese, data = stress))
+
+# Option - 2 #
+
+summary(lm(withdraw ~ estress + ese + estress * ese, data = stress))
+
+# option - 3 #
+
+summary(lm(withdraw ~ affect, data = stress))
+
+summary(lm(affect ~ ese + estress + ese * estress, data = stress))
+```
+
+
+```{r, message=FALSE}
+library(psych)
+
+stress$inter1 <- stress$tenure * stress$estress
+
+stress$inter2 <- stress$tenure * stress$ese
+
+mediate("withdraw",c("estress", "ese"), m = "affect", data = stress,plot=T)
+
+
+
+
+```
+
+
+Now the above set of regtession can be structured in the following manner (error term ignored)
+
+withdraw = a1 * ese + a2 * estress + a3 * affect - (equation # 1)
+
+affect = b1 * ese  + b2 * estress (equation # 2)
+
+ese = c1 * estress (equation # 3)
+
+Therefore, the above system of equation can be written as follows by substrituting the values of "ese" and "affect" 
+
+withdrraw = a1 * c1 * estress + a2 * estress + a3 * (b1 * ese + b2 * estress)
+
+= (a1 * c1 + a2) * estress + a3 * (b1 * c1 * ese + b2* estress)
+
+It can also be noted that as we substitute , we end up multiplying the regression coefficient. This can be considered as "Indirect effect". 
+
+In context of first equation , "a1" is the total effect and (a1 * c1) is the indirect effect. The difference between total effect and indirect effect is "Direct Effect". 
+
+
+```{r}
+
+summary(lm(ese ~ estress, data = stress)) # c1 = -0.10
+
+summary(lm(affect ~ ese + estress, data = stress)) # b1 = -0.15 , b2 = 0.15
+
+summary(lm(affect ~ ese + estress, data = stress))
+
+mediate("withdraw",c("estress", "ese"), m = "affect", data = stress,plot=T)
+
+
+```
+
