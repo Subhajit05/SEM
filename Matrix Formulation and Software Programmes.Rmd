@@ -1,0 +1,315 @@
+---
+title: "Matrix Formulation & SEM Softwares"
+author: "Subhajit Chattopadhyay"
+date: "11/6/2020"
+output: html_document
+---
+<link href = "E:/Mine/Books/IT/R-programming/Outline - R Programming/WD/SEM/SEM.css">
+
+<h3>Matrix Formulation - McArdle and McDonald </h3>
+
+<p>There are such procedures, which allow the expression of the equations of a path diagram as the product of several matrices.</p>
+
+<p> Not only does such an approach allow one to turn a path diagram into a set of path equations with less risk of error, but in fact one need not explicitly write down the path equations at all—one can carry out
+the calculation of implied correlations directly via operations on the matrices.</p>
+
+<p> Following methods are popular - 
+
+<ul>
+
+<li>McArdle and McDonald (1984)</li>
+
+<li>Benter-Weeks(1980)</li>
+
+<li>McArdle(1980)</li>
+
+<li>McDonald(1978)</li>
+
+</ul>
+
+
+</p>
+
+<img src = "E:/Mine/Books/IT/R-programming/Outline - R Programming/WD/SEM/Presentation1/Slide21.png">
+
+From the above diagramme following equations can be written - 
+$$C = c * B + a * A + e$$
+$$D = a * A + d$$
+Now the above equaiton can also be written in matrix form in the folloiwng manner - 
+
+$$A = 0*A + 0*B + 0*C + 0*D$$
+$$B = 0*A + 0*B + 0*C + B$$
+$$C = a * A + c * B + 0 * C + 0 * D + e$$
+$$D = a * A + 0 * B + 0 * C + 0 * D + d$$
+
+<img src= "E:/Mine/Books/IT/R-programming/Outline - R Programming/WD/SEM/Presentation1/Slide22.png">
+
+Now, if the vector of A, B C, D is considered as **v** , the coefficients are considered as **A** and the vector D, B , e and d is considered as **u**, then the above matrix can be written as 
+
+$$v = A * v + u$$
+
+$$v * (I - A) = u$$
+$$v = (I - A)^{-1}  u$$
+Now the covariance / correlation can be expressed as 
+
+$$\frac{vv^{\prime}}{n} = \frac{(I - A)^{-1} u u{^\prime}(I -A)^{-1{^\prime}}}{n}$$
+Now , $u * u^{\prime}$ is another covariance matrix , which can be donated as $S$ , so 
+
+$$C = \frac{v*v{^\prime}}{n} = \frac{(I - A)^{-1} * S * (I -A)^{-1{^\prime}}}{n}$$
+
+
+
+McArdle and McDonald (1984) defines the structure of the equation in the following manner -
+
+<ul>
+
+<li>A (for symmetric relations) contains paths.</li>
+
+<li>S (for asymmetric relations) contains correlations (or covariances) and residual variances.</li>
+
+<li>F (for filter matrix) selects out the observed variables from the total set of variables.</li>
+
+<img src = "E:/Mine/Books/IT/R-programming/Outline - R Programming/WD/SEM/Presentation1/Slide22.png">
+
+$$C = F * (I - A)^{-1} * S * (I -A)^{-1{^\prime}} * F{^\prime}$$
+
+where , there are "t" variables out of which "m" are measured -
+
+$A$ is a  (t * t) matrix
+
+$S$ is a (t * t) matrix
+
+$F$ is a (m * t) matrix
+
+
+<h3>Benter-Weeks Model</h3>
+
+$$\eta = \beta * \eta + \gamma * \xi$$
+where, there are "q" no of  DVs and "r" no of IVs are there.
+
+<ul>
+
+<li>$\eta$ is a q * q matrix </li>
+
+<li>$\beta$ is a q * q  matrix </li>
+
+<li>$\gamma$ is a q * r matrix </li>
+
+<li>$\xi$ is a r * 1 matrix </li>
+
+<\ul>
+
+<img src= "E:/Mine/Books/IT/R-programming/Outline - R Programming/WD/SEM/Presentation1/Slide7.png">
+
+<p>In the example, SKISAT, SNOWSAT, FOODSAT, NUMYRS, and DAYSKI are all DVs because they all have at least one line with a single-headed arrow pointing to them. Notice that SKISAT is a latent variable and also a dependent variable.</p>
+
+<p>
+
+
+
+In the above model , r = 7 and q = 5
+
+If the above above diagramme is represented in terms of the Benter-Weeks model, it would like 
+
+
+<img src= "E:/Mine/Books/IT/R-programming/Outline - R Programming/WD/SEM/Presentation1/Slide24.png">
+
+
+<h3>Computer Programmes - SEM</h3>
+
+<ul>
+
+<li>AMOS</li>
+
+<li>LISREL</li>
+
+<li>CALIS</li>
+
+<li>Lavaan</li>
+
+<li>sem</li>
+
+<li>Mx</li>
+
+<li>OpenMx</li>
+
+<li>Mplus</li>
+
+<li>SEPATH</li>
+
+</ul>
+
+
+<h3>Introduction to Lavaan</h3>
+
+<ul>
+<li>Defining the model 
+
+<ul>
+<li> Specifying the relationship among measured variables</li>
+
+<li> Specifying the relationship among latent variables</li>
+
+<li> Specifying the relationship among the latent and measured variables </li>
+
+</ul>
+
+
+
+<li>Looking the model fit</li>
+
+<li>Visual representation of the model</li>
+
+</ul>
+
+
+<p>Using Lavvan for FA - Example - 1 </p>
+```{r message=FALSE}
+library(lavaan)
+library(semPlot)
+library(psych)
+library(psychTools)
+
+test1 <- lavaan::HolzingerSwineford1939
+
+# The data consists of mental ability test scores of e children from two different schools Pasteur and Grant-White.
+
+str(test1)
+
+View(test1)
+
+summary(test1)
+
+test2 <- test1[,-c(1,5,6)]
+
+test.cor <- round(cor(test2),2)
+
+test.cor
+
+library(corrplot)
+
+corrplot(test.cor)
+
+test3 <- test1[,-c(1:6)] # removing all the demographic variables
+
+test.cor1 <- round(cor(test3),2)
+
+test.cor1
+
+cor.plot(test.cor1)
+
+fa1 <- factanal(~test3$x1 + test3$x2 + test3$x3 + test3$x4 + test3$x5 + test3$x4 + test3$x5 + test3$x6 , factors = 3)
+
+fa1
+
+
+# FA with Lavaan #
+
+model1 <- 'fact1 =~ x1 + x2 + x3
+           fact2 =~ x4 + x5 + x6
+           fact3 =~ x7 + x8 + x9'
+
+
+fit <- cfa(model = model1, data = test3)
+
+fit
+
+summary(fit)
+
+semPaths(fit)
+
+
+```
+
+
+<h3>SEM wih Lavaan</h3> 
+
+```{r message=FALSE, warning=FALSE}
+library(lavaan)
+library(semPlot)
+library(psych)
+library(psychTools)
+
+test4 <- lavaan::PoliticalDemocracy
+
+str(test4)
+
+# y1 - Expert ratings of the freedom of the press in 1960
+
+# y2 - The freedom of political opposition in 1960
+
+# y3 - The fairness of elections in 1960
+
+# y4 - The effectiveness of the elected legislature in 1960
+
+# y5 - Expert ratings of the freedom of the press in 1965
+
+# y6 - The freedom of political opposition in 1965
+
+# y7 - The fairness of elections in 1965
+
+# y8 - The effectiveness of the elected legislature in 1965
+
+# x1 - The gross national product (GNP) per capita in 1960
+
+# x2 - The inanimate energy consumption per capita in 1960
+
+# x3 - The percentage of the labor force in industry in 1960
+
+
+
+model2 <- '
+
+# factors 
+
+           eco60 =~ x1 + x2 + x3
+           
+           pol60 =~ y1 + y2 + y3 + y4
+           
+           pol65 =~ y5 + y6 + y7 + y8
+
+# regressions
+
+          pol60 ~ eco60 
+        
+          pol65 ~ eco60 + pol60 '
+
+model2
+
+fit1 <- sem(model= model2, data = test4)
+
+semPaths(fit1)
+summary(fit1)
+
+```
+
+
+```{r message=FALSE, warning=FALSE}
+
+model3 <- '
+  # measurement model
+    ind60 =~ x1 + x2 + x3
+    dem60 =~ y1 + y2 + y3 + y4
+    dem65 =~ y5 + y6 + y7 + y8
+  # regressions
+    dem60 ~ ind60
+    dem65 ~ ind60 + dem60
+  # residual correlations
+    y1 ~~ y5
+    y2 ~~ y4 + y6
+    y3 ~~ y7
+    y4 ~~ y8
+    y6 ~~ y8'
+
+
+fit2 <- sem(model = model3, data = test4)
+
+semPaths(fit2)
+
+summary(fit2)
+
+
+
+```
+
+

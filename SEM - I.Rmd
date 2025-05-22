@@ -1,0 +1,336 @@
+---
+title: "Structural Equation - 1"
+author: "Subhajit Chattopadhyay"
+date: "10/4/2020"
+output: html_document
+---
+
+
+<h2><font color = "green">SEM - Path Analysis</font></h2>
+
+<font size = "5" color = "blue">
+
+
+
+<p>Structural equation modeling (SEM) is a collection of statistical techniques that allow a set of relationships between one or more IVs, either continuous or discrete, and one or more DVs,either continuous or discrete, to be examined.</p>
+
+<p>Since the SEM is about exploring relationships among one or more dependent and independent variables , it is important to explore to understand the effect multiple variables on variance and covrariance.
+
+
+<h3><font color ="green"> Some Basic Diagrams</font></h3>
+
+
+<img src = "E:/Mine/Books/IT/R-programming/Outline - R Programming/WD/SEM/Presentation1/Slide8.png" height = "700" width = "700">
+
+<ul>
+
+<li> Variables A, B, and X all are assumed to have causal effects on variable C. </li>
+
+<li> Variables A and B are assumed to be correlated with each other. Variable X is assumed to affect C but to be uncorrelated with either A or B. </li>
+
+</ul>
+
+<img src = "E:/Mine/Books/IT/R-programming/Outline - R Programming/WD/SEM/Presentation1/Slide9.png" height = "700" width = "700">
+
+<ul>
+<li> the  capital letters A and B are used to designate two variables, with subscripts to identify the occasions on which they are measured: Both A and B are measured at time 1.</li>
+
+<li> A and B have been measured in time 2 and 3 also.</li>
+
+<li>  In this case, the diagram indicates that
+both A1 and B1 are assumed to affect A2, but that the effect of A1 on B at time 3 is
+wholly via A2-there is no direct arrow drawn leading from A1 to B3. </li>
+
+<li> It is assumed that
+A1 and B1 are correlated, and that A2 and B3 are subject to additional influences
+independent of A and B, here represented by short, unlabeled arrows.</li> 
+
+</ul>
+
+<h3><b>Completeness of Path Diagram</b></h3>
+
+<ul>
+ 
+<li>Variables in a path diagram may be grouped in two classes: those that do not receive causal inputs from any other variable in the path diagram, and those that receive one or more such causal inputs.</li>
+
+<li> Variables in the first of these classes are referred as exgogeneous / independent / source variables. </li>
+
+<li> Other set of variables are known as endogenous/dependent and downstream variables </li>
+
+<li> In a proper and complete path diagram, all the source variables are interconnected
+by curved arrows, to indicate that they may be correlated-unless it is explicitly
+assumed that their correlation is zero, in which case the curved arrow is omitted. </li>
+
+<li> Downstream variables, on the other hand, are **generally** never connected by curved arrows in
+path diagrams. </li>
+
+<li> Downstream / endogenous variables can also be corelated. They can either be represented by drawing curved lines among **residual arrows**. OR at times endogenous variable can **also be connected** with curved arrows. </li>
+
+
+<li> Residual arrows point at downstream variables, never at source variables.</li>
+
+<li>Completeness of a path diagram requires that a residual arrow be attached to every
+downstream variable unless it is explicitly assumed that all the causes of variation of
+that variable are included among the variables upstream from it in the diagram.**But this convention is not always adhered to.** </li>
+
+<img src = "E:/Mine/Books/IT/R-programming/Outline - R Programming/WD/SEM/Presentation1/Slide10.png" height = "700" width = "700">
+
+<li>**The objctive of path diagram is to connect smallest number of variables with smallest number of arrows.**</li>
+
+<img src = "E:/Mine/Books/IT/R-programming/Outline - R Programming/WD/SEM/Presentation1/Slide12.png" height = "700" width = "700">
+
+<li> Path Analysis can be used to represent causal loops. In the first diagramme represent a situation where there is a mutual causal influence between C and D - each aeffects each other. A causal sequence could go from A to C to D to C to D again and so on.</li>
+
+<li> The next diagramm represents a **feedback loop** in which A affects B which affects C which in turn effects A.</li>
+
+
+</ul>
+ 
+<h3><font color = "green">Other Assumptions</font></h3>
+
+<img src = "E:/Mine/Books/IT/R-programming/Outline - R Programming/WD/SEM/Presentation1/Slide11.png" height = "700" width = "700">
+
+<ul>
+
+<li>Causes are unitary. Referring to above diagramme it **should not be interpreted as two distincts aspects of T causes event A and B** . </li>
+
+<li> Residual arrows represnts the presence of other multple causes that are external to the path diagram. </li>
+
+<li> causal relationships represented by straight arrows are linear. Even if this is not true , some transformation of variables oftern the relationships linear. </li>
+
+</ul>
+
+
+
+<p> Following two diagrammes represents practical pehnomennons using path analysis - </p>
+
+<img src = "E:/Mine/Books/IT/R-programming/Outline - R Programming/WD/SEM/Presentation1/Slide6.png" height = "700" width = "700">
+
+<img src = "E:/Mine/Books/IT/R-programming/Outline - R Programming/WD/SEM/Presentation1/Slide7.png" height = "700" width = "1200">
+
+<p> Several conventions are used in developing SEM diagrams. Measured variables, also called
+observed variables, indicators, or manifest variables, are represented by squares or rectangles. </p>
+
+<p>Factors have two or more indicators and are also called latent variables, constructs, or unobserved
+variables. Factors are represented by circles or ovals in path diagrams. </p>
+
+<p> Independent Variable : In SEM, if there is not arrow point toward a variable can be considered as independent variable. </p>
+
+<p> Dependnet Variables : In SEM, all the variables which has an arrow pointing towards it can be considered as dependent variable. </p>
+
+
+
+
+
+
+<ul>
+
+<li>Description of Diagram:  SKISAT, SNOWSAT, FOODSAT, NUMYRS, and DAYSKI are all DVs because they all have at least one line with a single-headed arrow pointing to them. Notice that SKISAT is a latent variable and also a dependent variable.</li>
+
+<li> The seven IVs in this example are SENSEEK, LOVESKI, D2, E1, E2, E3, and E4. **E** stands for residual error generated while estimation. And **D** stands for **disturbance** genrated for latent variables.</li>
+
+</ul>
+
+<p>
+
+<h3> <font color = "green">Moderation, Mediation and Path Analysis  </h3>
+
+In this section we will brush-up the following relationship - </p>
+
+<ol>
+
+<li> <h3>Moderation</h3> </li>
+<img src = "E:/Mine/Books/IT/R-programming/Outline - R Programming/WD/SEM/Presentation1/Slide1.png" height = "700" width = "700">
+
+<li><h3>Mediation</h3></li>
+<img src = "E:/Mine/Books/IT/R-programming/Outline - R Programming/WD/SEM/Presentation1/Slide2.png" height = "700" width = "700">
+
+
+</ol>
+
+<p>
+
+<h3><font color = "green">Moderation & Mediation</font></h3>
+
+<p> In the following section we will brush up our understanding about moderationa and mediation.</p>
+
+
+```{r msg = F}
+
+library(ggplot2)
+library(plotly)
+
+agg <- read.csv("E:/Mine/Books/IT/R-programming/Outline - R Programming/WD/D3.1/aggression.csv") # old aggression data that we discussed earlier 
+str(agg)
+
+plot_ly(agg, x = ~Vid_Game, y = ~Aggress, color = ~CaUnTs, size = ~CaUnTs, type = "scatter")
+
+ggplot(data = agg, aes(x = Vid_Game, y = Aggress)) + geom_point(aes(color = CaUnTs)) + facet_grid(cut(agg$CaUnTs,4)) + geom_smooth(method = "lm", color = "red")
+
+model1 <- lm(agg$Aggress ~ agg$Vid_Game + agg$CaUnTs)
+
+summary(model1)
+
+model1.1 <- lm(agg$Aggress ~ agg$Vid_Game + agg$CaUnTs + agg$Vid_Game * agg$CaUnTs)
+
+summary(model1.1)
+
+
+```
+
+<h3>Point to be remembered </h3>
+
+<ul>
+<li> One need to remember to center the variables.</li>
+
+<li> Moderation occurs when the relationship between two variables changes as a function of a third variable. THis shows that regression coefficient between two variables is a function of a third variable.</li>
+
+</ul>
+
+<h2> <font color = green>Mediation </font></h2>
+
+Baron and Kenny suggested that mediation is tested through three linear models:
+
+<ol>
+
+<li> A linear model predicting the outcome from the predictor variable.</li>
+
+<li> A linear model predicting the mediator from the predictor variable.</li>
+
+<li> A linear model predicting the outcome from both the predictor variable and the mediator. </li>
+
+</ol>
+
+If the predictor variable must predict the outcome variable less strongly in model 3 than in model 1, the it can be concluded that **mediation** exist.
+
+<h3> Significance of Mediation </h3>
+
+Sobel test is performed to assess the significance of the *indirect effect*. Following statistics can be used to test the significance. 
+
+$$indirect-effect(standardized) = \frac{a * b}{\sigma_{dv}}* \sigma_{iv}$$
+<p> where, </p>
+
+**a and b** are the regression coefficients of the indirect path.Further, it can also be represented as follows - 
+
+<p>$$P_{m} = \frac{a * b}{c}$$</p>
+<p>$$P_{m} = \frac{a * b}{c^\prime}$$</p>
+
+
+
+```{r message=F}
+
+library(ggplot2)
+library(plotly)
+library(GGally)
+
+stress <- read.csv("E:/Mine/Books/IT/R-programming/Outline - R Programming/WD/D3.1/e_stress.csv")
+
+str(stress)
+
+ggpairs(stress)
+
+
+
+```
+
+<h3> Description of **Economic Stress** dataset : </h3>
+
+<ul>
+
+<li>estress - economic stress , the main phenomena </li>
+
+
+<li>ese - economic and social ties (business networking, i.e. no of people respondent physically met on a  + talked to over phone and sent an email on Everday day. </li>
+
+
+<li> affect - depression due to economic stress </li>
+
+
+<li> withdraw - closing business </li>
+
+
+<li> tenure - experience in the business </li>
+
+
+<li> Rest of the variables are demographic variables and self explanatory in nature.</li>
+
+</ul>
+
+So, the strings of relationships starts with economic stress and ends with withdrawl symptoms.
+
+
+
+```{r}
+
+model2 <- lm(withdraw ~ estress, data = stress)
+summary(model2)
+
+model2.1 <- lm(withdraw ~ estress + tenure, data = stress)
+summary(model2.1)
+
+model2.2 <- lm(withdraw ~ estress + tenure + affect, data = stress)
+summary(model2.2)
+ 
+summary(lm(affect ~ estress , data = stress))
+summary((lm(withdraw ~ affect , data = stress)))
+
+model2.3 <- lm(withdraw ~ estress + tenure + affect + ese, data = stress)
+summary(model2.3)
+
+
+model2.4 <- lm(withdraw ~ estress + tenure + affect + ese + age, data = stress)
+summary(model2.4)
+
+model2.5 <- lm(withdraw ~ estress + tenure + affect + ese + age + sex, data = stress)
+summary(model2.5)
+
+
+```
+
+
+In the context of the above regression results which yielded a non-statisfactory result - we would like to obtain more insight about the roles playes by various variables using the following visualisations. 
+
+```{r message=F}
+
+library(ggplot2)
+
+colnames(stress)
+
+ggplot(data = stress, aes(x = estress,y = withdraw))+ geom_smooth(method = "lm", color = "red") + facet_wrap(cut(stress$affect,4))
+
+ggplot(data = stress, aes(x = estress,y = withdraw))+ geom_smooth(method = "lm", color = "red") + facet_wrap(cut(stress$ese,4))
+
+ggplot(data = stress, aes(x = estress,y = withdraw))+ geom_smooth(method = "lm", color = "red") + facet_wrap(cut(stress$tenure,4))
+
+ggplot(data = stress, aes(x = estress,y = withdraw))+ geom_smooth(method = "lm", color = "red") + facet_wrap(cut(stress$age,4))
+
+
+
+ggplot(data = stress, aes(x = estress,y = withdraw))+ geom_smooth(method = "lm", color = "red") + facet_wrap(stress$sex)
+
+
+
+```
+
+
+
+
+
+```{r message=F}
+library(psych)
+
+# A Basic / simple version #
+
+model2.6 <- mediate(withdraw ~ estress + affect, data = stress) 
+summary(model2.6)
+
+
+```
+
+
+Now you need to develope alternative models , which you think represents the phenomena. Dataset has already been shared with you. 
+
+</p>
+
+
+
